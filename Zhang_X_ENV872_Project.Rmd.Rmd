@@ -6,8 +6,8 @@ output:
     number_sections: yes
 geometry: margin=2.54cm
 title: eGRID Data Analysis
-subtitle: Web address for GitHub repository
-author: Your Name
+subtitle: https://github.com/zhangxsaras/eGRID16
+author: Xin Zhang
 abstract: "Experimental overview. This section should be no longer than 250 words."
 fontsize: 12pt
 mainfont: Times New Roman
