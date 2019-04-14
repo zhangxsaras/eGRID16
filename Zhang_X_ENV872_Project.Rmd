@@ -146,8 +146,11 @@ head(PLNT16sel)
 ```
 
 
-```{r, echo=False}
-
+```{r, echo= FALSE}
+plotGEN16 <- ggplot(GEN16sel, aes(x = GENYRONL, y = GENSUM)) + 
+  geom_point()+
+  labs(x= "Year", y="Totoal Annual Net Generation (MWh)")
+plotGEN16
 
 
 
