@@ -29,11 +29,26 @@ mainfont: Times New Roman
 
 ```{r setup, include=FALSE}
 # Set your working directory
+getwd()
 
 # Load your packages
+library(tidyverse)
+library(lubridate)
+library(nlme)
+library(lsmeans)
+library(multcompView)
+library(trend)
+library(sf)
+library(leaflet)
+library(mapview)
+library(RColorBrewer)
+library(usmap)
 
 # Set your ggplot theme
-
+mytheme <- theme_classic(base_size = 14) +
+  theme(axis.text = element_text(color = "black"), 
+        legend.position = "top")
+theme_set(mytheme)
 ```
 
 
@@ -56,6 +71,89 @@ mainfont: Times New Roman
 # Exploratory Data Analysis and Wrangling
 
 <Include R chunks for 5+ lines of summary code (display code and output), 3+ exploratory graphs (display graphs only), and any wrangling you do to your dataset(s).> 
+```{r}
+#Load dataset
+GEN16 <- read.csv("./Data/Raw/egrid_GEN16.csv")
+PLNT16 <- read.csv("./Data/Raw/egrid_PLNT16.csv")
+
+#data wrangling
+#This dataset has two names, one is the full name, and the first row is the abbreviation
+#change column names to the abbr.
+names(GEN16) <- lapply(GEN16[1, ], as.character)
+names(PLNT16) <- lapply(PLNT16[1, ], as.character)
+
+#filter out the first row and use abbr. as column names
+GEN16 <- GEN16[2：26184，] 
+PLNT16 <- PLNT16[2：9710，]
+
+
+#numeric data has comma, convert factor to numberic
+class (GEN16$GENNTAN)
+GEN16$GENNTAN <-as.numeric(gsub(",", "", GEN16$GENNTAN))
+PLNT16$PLNGENAN <-as.numeric(gsub(",", "", PLNT16$PLNGENAN))
+PLNT16$PLCO2EQA <-as.numeric(gsub(",", "", PLNT16$PLCO2EQA))
+
+#Year data as.Date
+class (GEN16$GENYRONL)
+GEN16$GENYRONL<-as.Date(GEN16$GENYRONL,format = "%Y")
+
+#filter data by the sequence of time
+GEN16 = GEN16[order(GEN16[,'GENYRONL']),]
+
+#GEN16 - sum the totoal generation by year
+GEN16sel <- GEN16 %>%
+  select(SEQGEN16, PSTATABB, GENNTAN, GENYRONL) %>%
+  filter(!is.na(GENNTAN)) %>%
+  filter(GENNTAN>0) %>%
+  group_by(GENYRONL)%>%
+  summarise(GENSUM = sum(GENNTAN)) 
+
+#GEN16 - sum the totoal generation/CO2/plant numbers by state
+PLNT16sel <- PLNT16 %>%
+  select(SEQPLT16, PSTATABB, PLPRMFL, PLNGENAN, PLCO2EQA) %>%
+    filter(!is.na(PLNGENAN)&!is.na(PLCO2EQA)) %>%
+  filter(PLNGENAN>0)%>%
+  group_by(PSTATABB)%>%
+  summarise(PLNTGEN = sum(PLNGENAN),
+            ECO2 = sum(PLCO2EQA),
+            Count=n())
+
+#summary code for GEN16
+colnames(GEN16sel)
+class(GEN16sel$GENSUM)
+class(GEN16sel$GENNTAN)
+summary(GEN16sel)
+dim(GEN16sel)
+head(GEN16sel)
+
+#summary code for PLNT16
+colnames(PLNT16sel)
+class(PLNT16sel$PLNTGEN)
+class(PLNT16sel$ECO2)
+summary(PLNT16sel)
+dim(PLNT16sel)
+head(PLNT16sel)
+
+#save new datasets
+#write.csv(GEN16sel, file = "./Data/Processed/GEN16sel_Processed.csv",row.names=FALSE)
+#write.csv(PLNT16sel, file = "./Data/Processed/PLNT16sel_Processed.csv",row.names=FALSE)
+#data prep for shiny app
+#PLNT16orisel <- PLNT16 %>%
+#  select(SEQPLT16, PSTATABB, PLPRMFL, PLNGENAN, PLCO2EQA) %>%
+#    filter(!is.na(PLNGENAN)&!is.na(PLCO2EQA)) %>%
+#  filter(PLNGENAN>0)
+#write.csv(PLNT16orisel, file = "./Data/Processed/PLNT16ori_Processed.csv",row.names=FALSE)
+```
+
+
+```{r, echo=False}
+
+
+
+
+
+
+```
 
 <Include text sections to accompany these R chunks to explain the reasoning behind your workflow, and the rationale for your approach.>
 
