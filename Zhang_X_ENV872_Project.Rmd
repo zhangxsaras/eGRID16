@@ -11,7 +11,7 @@ output:
 mainfont: Times New Roman
 geometry: margin=2.54cm
 subtitle: https://github.com/zhangxsaras/eGRID16
-abstract: Power plant emissions contribute a great amount Green House Gas (GHG) to the atmosphere and GHG emissions account a lot for the global mean temperature rise. Power Plant emission amount is related to its generation and in general, higher generation indicates higher fuel use and higher emission. Studying power plants generation can help us understand emission pattern. To study the temporal and spatial pattern of power plants generation can help us predict future power generation and then we can give suggestions accordingly to reduce emission. From the time series analysis and spatial analysis results, it turned out there is an installation time trend for generator annual net generation, and there are spatial distribution patterns of power plants in U.S.. From 1900s to 2016, the generation increased with fluctuation and the trend was related to policy and world fuel market. We could not predict the future electricity generation since there was no clear trend after 1987. However, from the differences of spatial distribution patterns of Power Plants in U.S., we found that using renewable energy to replace traditional energy power plants can help a lot to reduce GHG emission in the future.
+abstract: Power plant emissions contribute a great amount Green House Gas (GHG) to the atmosphere and GHG emissions account a lot for the global mean temperature rise. Power Plant emission amount is related to its generation and in general, higher generation indicates higher fuel use and higher emission. Studying power plants generation can help us understand emission pattern. To study the temporal and spatial pattern of power plants generation can help us predict future power generation and then we can give suggestions accordingly to reduce emission. I used the Emissions & Generation Resource Integrated Database (eGRID) to do analysis. From the time series analysis and spatial analysis results, it turned out there is an installation time trend for generator annual net generation, and there are spatial distribution patterns of power plants in U.S.. From 1900s to 2016, the generation increased with fluctuation and the trend was related to policy and world fuel market. We could not predict the future electricity generation since there was no clear trend after 1987. However, from the differences of spatial distribution patterns of Power Plants in U.S., we found that using renewable energy to replace traditional energy power plants can help a lot to reduce GHG emission in the future.
 editor_options: 
   chunk_output_type: console
 ---
@@ -61,7 +61,7 @@ theme_set(mytheme)
 
 <Paragraph detailing your research question(s) and goals. What do you want to find out? Include a sentence (or a few) on the dataset you are using to answer this question - just enough to give your reader an idea of where you are going with the analysis.>
 
->Public awareness of global climate change’s impacts on the environment and the society has increased. Greenhouse gas (GHG) emissions account a lot for the global mean temperature rise. To achieve the goal of limiting global warming to 1.5°C, by 2030, global net human-caused emissions of carbon dioxide (CO2) would need to decrease by around 45 % from 2010 levels, and by 2050, CO2 emission would need to reach ‘net zero’ (IPCC, 2018). In United States, a large amount of GHG emissions come from the electric power sector. The electric power sector accounts for 38% of the total U.S. energy consumption in 2017 (US EIA, 2017). In the same year, the transportation end-use sector and other mobile combustion accounted for 1,732.02 MMT CO2Eq., which accounts 28% of the total GHG emission in the U.S., which is the second largest GHG emissions from all other sectors (the largest is the transportation sector) (US EPA, 2018). To study the temporal and spatial pattern of power plants generation can help us predict future power generation and then we can give suggestions accordingly to reduce emission. 
+> Public awareness of global climate change’s impacts on the environment and the society has increased. Greenhouse gas (GHG) emissions account a lot for the global mean temperature rise. To achieve the goal of limiting global warming to 1.5°C, by 2030, global net human-caused emissions of carbon dioxide (CO2) would need to decrease by around 45 % from 2010 levels, and by 2050, CO2 emission would need to reach ‘net zero’ (IPCC, 2018). In United States, a large amount of GHG emissions come from the electric power sector. The electric power sector accounts for 38% of the total U.S. energy consumption in 2017 (US EIA, 2017). In the same year, the transportation end-use sector and other mobile combustion accounted for 1,732.02 MMT CO2Eq., which accounts 28% of the total GHG emission in the U.S., which is the second largest GHG emissions from all other sectors (the largest is the transportation sector) (US EPA, 2018). To study the temporal and spatial pattern of power plants generation can help us predict future power generation and then we can give suggestions accordingly to reduce emission. 
 
 >Therefore, here I raise two research questions:
 >(1) Is there an installation time trend for generator annual net generation? (New power generators tend to have higher or lower capacity overtime?) 
@@ -77,6 +77,7 @@ theme_set(mytheme)
 
 <Add a table that summarizes your data structure. This table can be made in markdown text or inserted as a `kable` function in an R chunk. If the latter, do not include the code used to generate your table.>
 
+> Here I am going to use the 2016 Emissions & Generation Resource Integrated Database (eGRID). It is a comprehensive source of data on the environmental characteristics of # almost all electric power generated in the United States. I am going to use the GEN16 tab (2016 Generators) and the PLNT 16 tab (2016 Plants).
 > The dataset was retrieved at:
 > https://www.epa.gov/energy/emissions-generation-resource-integrated-database-egrid
 > on 2019-03-25 21:10:11 EDT. It was originally an excel file and I saved it as two separate csv files of GEN16 an PLNT16. Since the dataset has two names in the first two rows (one full name and one abbreviate one), here I only list the columns I will use later, others can check the original dataset for references.
@@ -85,11 +86,7 @@ theme_set(mytheme)
 > ------------- | ------------- | ------------- | ------------- | ------------- | -------------
 > GEN16 | Generators Information | SEQGEN16: eGRID2016 Plant file sequence number | PSTATABB: Plant state abbreviation | GENNTAN: Generator annual net generation (MWh) | GENYRONL: Generator year on-line
 > PLNT16 | Plants Information | SEQGEN16: eGRID2016 Plant file sequence number | PSTATABB: Plant state abbreviation | PLNGENAN: Plant annual net generation (MWh) | PLCO2EQA: Plant annual CO2 equivalent emissions (tons)
-
-```{r, }
-
-
-```
+> Table: Dataset Information
 
 
 \newpage
@@ -252,7 +249,7 @@ mk.test(GEN16sel$GENSUM[94:123])
 # no trend before and after the changing point
 
 ```
-> According to the Mann-Kendall test, there is a trend over time for total annual net generation of generators (p<0.001), Z =11.311, which indicates a positive trend over time. Accroding to pettitt test. There are three changing points: Year 1952, Year 1969 and Year 1987 (p<0.05).
+> According to the Mann-Kendall test, there is a trend over time for total annual net generation of generators (p<0.001), Z =11.311, which indicates a positive trend over time. According to pettitt test. There are three changing points: Year 1952, Year 1969 and Year 1987 (p<0.05).
 
 ```{r, fig.cap="Generators Time Series Analysis", echo=FALSE}
 ggplot(GEN16sel, aes(x = GENYRONL, y = GENSUM)) + 
@@ -266,7 +263,7 @@ ggplot(GEN16sel, aes(x = GENYRONL, y = GENSUM)) +
   geom_text(x = as.Date("1987-01-01"), y = 200000000, label = "(1978; 70,272,900 MWh)", hjust = 1) 
 ```
 
-> As is shown in the figure, before the first changing point 1952, the annual net generation of genrators in U.S. incrased very slowly each year and after 1952, the speed of generation change became faster. Annual net generation kept growing until 1969, this is the second change point. After 1969, there was a negative trend of annual net generation. The third changing point is Year 1987, and there was no clear pattern in 1969-1987 or after 1987.
+> As is shown in the figure (Figure 5), before the first changing point 1952, the annual net generation of generators in U.S. increased very slowly each year and after 1952, the speed of generation change became faster. Annual net generation kept growing until 1969, this is the second change point. After 1969, there was a negative trend of annual net generation. The third changing point is Year 1987, and there was no clear pattern in 1969-1987 or after 1987.
 
 ```{r}
 #Q2 spatial distribution analysis on PLNT16
@@ -314,21 +311,20 @@ plot_usmap(data = PLNT_State, values = "ECO2", lines = "red") +
   theme(legend.position = "right")
 ```
 
-> Since our research scale is U.S., it also includes Alaska and this made it very difficult to map it using ggplot (AL will be far away from other sates and the whole map will be very small to show). Therefore, here I use the plot_usmap funciton instead.As the maps show (Figure 6, 7, 8), there are spatial distribution patterns. For total plant numbers, California ranks first but in general,there are more power plants in east cosat states than in west coast. Texas is another exception in the southern part that has relatively larger numbers of power plants.  For plant annual net generation, in general, east coast states also have relatively higher net generation than west coast states, and Texas ranks first. Accordingly, Texas also has highest annual CO2 equivalent emissions, and east coat states have higher emissions than west coast states.
+> Since our research scale is U.S., it also includes Alaska and this made it very difficult to map it using ggplot (AL will be far away from other states and the whole map will be very small to show). Therefore, here I use the plot_usmap function instead. As the maps show (Figure 6, 7, 8), there are spatial distribution patterns. For total plant numbers, California ranks first but in general, there are more power plants in east coast states than in west coast. Texas is another exception in the southern part that has relatively larger numbers of power plants.  For plant annual net generation, in general, east coast states also have relatively higher net generation than west coast states, and Texas ranks first. Accordingly, Texas also has highest annual CO2 equivalent emissions, and east coast states have higher emissions than west coast states.
 
 \newpage
 
 # Summary and Conclusions
 <Summarize your major findings from your analyses. What conclusions do you draw from your findings? Make sure to apply this to a broader application for the research question you have answered.>
 
-> From the analysis above, we can see that time has a significant effect on the total annual net generation of generators. There is a trend over time for total annual net generation of generators that new power generators tend to have higher or net generation overtime.
-
 > There are also three changing points of the whole period: 1952, 1969, 1987. After 1952, there is a huge increase in power generation each year, this might be related to the technology thrive at the end of 1940s. The first hydraulic fracturing treatment was pumped on a gas well operated by Pan American Petroleum Corp in the Hugoton field in 1947 and it was the beginning of period of rapid electric industry growth (Oilscams.org, Access: 2019-4-14). However, at the end of 1960s, energy crisis caused the reduction of electricity generation and this energy crisis peaked at 1973 (Energy Crisis (1970s), Access: 2019-4-14). This accord with our second changing point here at 1969 and after 1969, there was a negative trend of annual net generation. 
 
-> In the late 1970s, the government published more regulations on the electricity generation industry such as the National Energy Act in 1978 to exert more control on the electricity industry. In 1990s, the government published Congress passes Bush's Energy Policy Act (EPACT) to deregulate the electricity industry (Ballotpedia, Access: 2019-4-14). The back and force between strict and loose policies led to the fluctuations of the generator generations, and this might be a cause why there is a changing point of 1987 according to the pettitt test but there were no trend before and after this year according to the Mann-Kendall test.
+> In the late 1970s, the government published more regulations on the electricity generation industry such as the National Energy Act in 1978 to exert more control on the electricity industry. In 1990s, the government published Congress passes Bush's Energy Policy Act (EPACT) to deregulate the electricity industry (Ballotpedia, Access: 2019-4-14). The back and force between strict and loose policies led to the fluctuations of the generator generations, and this might be a cause why there is a changing point of 1987 according to the pettitt test but there was no trend before and after this year according to the Mann-Kendall test.
 
-> From the maps, we can see that there was spatial distribution pattern for power plants generation in 2016. In general, eastern states had higher power plant numbers, electricity net generation, and equivalent CO2 emissions than western states. California ranked first for total power plants nubmers but its anual net generation and equivalent CO2 emission were both much less than Texas.The main reason for this was the type of power plants. In Texas, there are more traditonal power plants using coal and natural gas as fuel, but in California, there are more renewable energy power plants. Compared to traditional power plants (600 MW, 0.75), renewable power plants have lower nameplate capacity and capacity factor (1000MW, 0.1). Therefore, even though California had more power plants, it had lower electricity generation. Also, compared to traditional power plants, renwable power plants use clean energy and barly have any emissions, so California's equivalent CO2 emissions were also much lower than Texas.
+> From the maps, we can see that there was spatial distribution pattern for power plants generation in 2016. In general, eastern states had higher power plant numbers, electricity net generation, and equivalent CO2 emissions than western states. California ranked first for total power plants numbers but its annual net generation and equivalent CO2 emission were both much less than Texas. The main reason for this was the type of power plants. In Texas, there are more traditional power plants using coal and natural gas as fuel, but in California, there are more renewable energy power plants. Compared to traditional power plants (600 MW, 0.75), renewable power plants have lower nameplate capacity and capacity factor (1000MW, 0.1). Therefore, even though California had more power plants, it had lower electricity generation. Also, compared to traditional power plants, renewable power plants use clean energy and barely have any emissions, so California's equivalent CO2 emissions were also much lower than Texas.
 
-> To sum up, there is an installation time trend for generator annual net generation. From 1900s to 2016, the generation increased with fluctuation and the trend was related to policy and world fuel market. It was very difficult to predict the futhure electricity generation since there was no clear trend after 1987. However, from the differences of spatial distribution patterns of Power Plants in U.S., we can give suggesitons of using renewable energy to replace traditional energy power plants. This can help a lot to reduce GHG emission in the futher. 
+> To sum up, there is an installation time trend for generator annual net generation. From 1900s to 2016, the generation increased with fluctuation and the trend was related to policy and world fuel market. It was very difficult to predict the future electricity generation since there was no clear trend after 1987. However, from the differences of spatial distribution patterns of Power Plants in U.S., we can give suggestions of using renewable energy to replace traditional energy power plants. This can help a lot to reduce GHG emission in the future.
+
 
 
