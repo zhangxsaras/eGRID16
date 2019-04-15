@@ -1,5 +1,5 @@
 ---
-title: "eGRID Data Analysis"
+title: "Study of Temporal and Spatial Generation Patterns of U.S. Power Plants"
 author: "Xin Zhang"
 fontsize: 12pt
 output:
@@ -11,7 +11,7 @@ output:
 mainfont: Times New Roman
 geometry: margin=2.54cm
 subtitle: https://github.com/zhangxsaras/eGRID16
-abstract: Experimental overview. This section should be no longer than 250 words.
+abstract: Power plant emissions contribute a great amount Green House Gas (GHG) to the atmosphere and GHG emissions account a lot for the global mean temperature rise. Power Plant emission amount is related to its generation and in general, higher generation indicates higher fuel use and higher emission. Studying power plants generation can help us understand emission pattern. To study the temporal and spatial pattern of power plants generation can help us predict future power generation and then we can give suggestions accordingly to reduce emission. From the time series analysis and spatial analysis results, it turned out there is an installation time trend for generator annual net generation, and there are spatial distribution patterns of power plants in U.S.. From 1900s to 2016, the generation increased with fluctuation and the trend was related to policy and world fuel market. We could not predict the future electricity generation since there was no clear trend after 1987. However, from the differences of spatial distribution patterns of Power Plants in U.S., we found that using renewable energy to replace traditional energy power plants can help a lot to reduce GHG emission in the future.
 editor_options: 
   chunk_output_type: console
 ---
@@ -287,9 +287,15 @@ plot_usmap(data = PLNT_State, values = "ECO2", lines = "red") +
 
 # Summary and Conclusions
 <Summarize your major findings from your analyses. What conclusions do you draw from your findings? Make sure to apply this to a broader application for the research question you have answered.>
-> From the analysis above, we can see that time has a significant effect on the total annual net generation of generators. There is a trend over time for total annual net generation of generators that new power generators tend to have higher or net generation overtime.
-> There are also three changing points of the whole period: 1952, 1969, 1987. After 1952, there is a huge incrase in power generation each year, this might be related to the technology thirve at the end of 1940s. The first hydraulic fracturing treatment was pumped on a gas well operated by Pan American Petroleum Corp in the Hugoton field in 1947 and it was the beginning of period of rapid electric industry growth (Oilscams.org, Access: 2019-4-14). However, at the end of 1960s, energy crisis caused the reduction of electricity generation and this energ crsis peaked at 1973 (Energy Crisis (1970s), Access: 2019-4-14). This accord with our second changing point here at 1969 and after 1969, there was a negative trend of annual net generation. 
-> In the late 1970s, the goverment published more regulations on the electricity generation industry such as the National Energy Act in 1978 to exert more control on the electricity indrustry. In 1990s, the government published Congress passes Bush's Energy Policy Act (EPACT) to deragulate the electricity indurstry (Ballotpedia, Access: 2019-4-14). The back and force between strict and loose policies led to the fluctuations of the generator generations, and this might be a cuase why there is a changing point of 1987 according to the pettitt test but there were no trend before and after this year according to the Mann-Kendall test.
 
+> From the analysis above, we can see that time has a significant effect on the total annual net generation of generators. There is a trend over time for total annual net generation of generators that new power generators tend to have higher or net generation overtime.
+
+> There are also three changing points of the whole period: 1952, 1969, 1987. After 1952, there is a huge increase in power generation each year, this might be related to the technology thrive at the end of 1940s. The first hydraulic fracturing treatment was pumped on a gas well operated by Pan American Petroleum Corp in the Hugoton field in 1947 and it was the beginning of period of rapid electric industry growth (Oilscams.org, Access: 2019-4-14). However, at the end of 1960s, energy crisis caused the reduction of electricity generation and this energy crisis peaked at 1973 (Energy Crisis (1970s), Access: 2019-4-14). This accord with our second changing point here at 1969 and after 1969, there was a negative trend of annual net generation. 
+
+> In the late 1970s, the government published more regulations on the electricity generation industry such as the National Energy Act in 1978 to exert more control on the electricity industry. In 1990s, the government published Congress passes Bush's Energy Policy Act (EPACT) to deregulate the electricity industry (Ballotpedia, Access: 2019-4-14). The back and force between strict and loose policies led to the fluctuations of the generator generations, and this might be a cause why there is a changing point of 1987 according to the pettitt test but there were no trend before and after this year according to the Mann-Kendall test.
+
+> From the maps, we can see that there was spatial distribution pattern for power plants generation in 2016. In general, eastern states had higher power plant numbers, electricity net generation, and equivalent CO2 emissions than western states. California ranked first for total power plants nubmers but its anual net generation and equivalent CO2 emission were both much less than Texas.The main reason for this was the type of power plants. In Texas, there are more traditonal power plants using coal and natural gas as fuel, but in California, there are more renewable energy power plants. Compared to traditional power plants (600 MW, 0.75), renewable power plants have lower nameplate capacity and capacity factor (1000MW, 0.1). Therefore, even though California had more power plants, it had lower electricity generation. Also, compared to traditional power plants, renwable power plants use clean energy and barly have any emissions, so California's equivalent CO2 emissions were also much lower than Texas.
+
+> To sum up, there is an installation time trend for generator annual net generation. From 1900s to 2016, the generation increased with fluctuation and the trend was related to policy and world fuel market. It was very difficult to predict the futhure electricity generation since there was no clear trend after 1987. However, from the differences of spatial distribution patterns of Power Plants in U.S., we can give suggesitons of using renewable energy to replace traditional energy power plants. This can help a lot to reduce GHG emission in the futher. 
 
 
