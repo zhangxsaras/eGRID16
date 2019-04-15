@@ -1,16 +1,19 @@
 ---
-output: 
-  pdf_document:
-    keep_tex: yes
-    fig_caption: yes
-    number_sections: yes
-geometry: margin=2.54cm
-title: eGRID Data Analysis
-subtitle: https://github.com/zhangxsaras/eGRID16
-author: Xin Zhang
-abstract: "Experimental overview. This section should be no longer than 250 words."
+title: "eGRID Data Analysis"
+author: "Xin Zhang"
 fontsize: 12pt
+output:
+  pdf_document:
+    fig_caption: yes
+    keep_tex: yes
+    number_sections: yes
+  word_document: default
 mainfont: Times New Roman
+geometry: margin=2.54cm
+subtitle: https://github.com/zhangxsaras/eGRID16
+abstract: Experimental overview. This section should be no longer than 250 words.
+editor_options: 
+  chunk_output_type: console
 ---
 
 <Information in these brackets are used for annotating the RMarkdown file. They will not appear in the final version of the PDF document>
@@ -83,8 +86,8 @@ names(GEN16) <- lapply(GEN16[1, ], as.character)
 names(PLNT16) <- lapply(PLNT16[1, ], as.character)
 
 #filter out the first row and use abbr. as column names
-GEN16 <- GEN16[2：26184，] 
-PLNT16 <- PLNT16[2：9710，]
+GEN16 <- GEN16[2:26184,] 
+PLNT16 <- PLNT16[2:9710,]
 
 
 #numeric data has comma, convert factor to numberic
@@ -146,16 +149,24 @@ head(PLNT16sel)
 ```
 
 
-```{r, echo= FALSE}
-plotGEN16 <- ggplot(GEN16sel, aes(x = GENYRONL, y = GENSUM)) + 
+```{r, echo=FALSE}
+ggplot(GEN16sel, aes(x = GENYRONL, y = GENSUM)) + 
   geom_point()+
   labs(x= "Year", y="Totoal Annual Net Generation (MWh)")
-plotGEN16
+```
 
+```{r, fig.width=16, fig.height=8, echo=FALSE}
+ggplot(PLNT16sel) + 
+  geom_bar(aes(x = PSTATABB , y = Count),stat = "identity")+
+  labs(x= "State", y="Total Plant Numbers")
 
+ggplot(PLNT16sel) + 
+  geom_bar(aes(x = PSTATABB , y = PLNTGEN),stat = "identity")+
+  labs(x= "State", y="Totoal Plant Net Generation (MWh)")
 
-
-
+ggplot(PLNT16sel) + 
+  geom_bar(aes(x = PSTATABB , y = ECO2),stat = "identity")+
+  labs(x= "State", y="CO2 equivalent emissions (tons)")
 ```
 
 <Include text sections to accompany these R chunks to explain the reasoning behind your workflow, and the rationale for your approach.>
@@ -168,11 +179,115 @@ plotGEN16
 
 <Include text sections to accompany these R chunks to explain the reasoning behind your workflow, rationale for your approach, and the justification of meeting or failing to meet assumptions of tests.>
 
+```{r}
+#Q1 Time series analysis on GEN16
+# Use GLM to see if there is a significant time trend
+GENTest.fixed <- gls(data = GEN16sel,
+                     GENSUM ~ GENYRONL, 
+                      method = "REML")
+summary(GENTest.fixed) # significnat trend t=10.23, p<0.005.
+```
+
+> According to GLM, time has a significant effect on the total annual net generation of generators (t=10.23, p<0.05).
+
+```{r}
+# Run a Mann-Kendall test
+mk.test(GEN16sel$GENSUM)
+# there is a trend over time according to this test (p<0.001), Z is positive, positive trend - time passes, value increases 
+
+# Test for change point
+pettitt.test(GEN16sel$GENSUM) #changing point at 58 - Year 1952
+#GEN16sel[58,]
+
+# Run separate Mann-Kendall for each change point
+mk.test(GEN16sel$GENSUM[1:57])
+# there is a trend over time according to this test (p<0.001), Z is positive, positive trend - time passes, value increasess 
+mk.test(GEN16sel$GENSUM[58:123])
+# there is a trend over time according to this test (p<0.05), Z is positive, positive trend - time passes, value increasess 
+
+# Is there a second change point?
+pettitt.test(GEN16sel$GENSUM[58:123]) #there is! 17 - Year 1969
+#GEN16sel[75,]
+
+# Run separate Mann-Kendall for each change point
+mk.test(GEN16sel$GENSUM[58:74])
+# there is a trend over time according to this test (p<0.05), Z is positive, positive trend - time passes, value increasess 
+mk.test(GEN16sel$GENSUM[75:123])
+# there is a trend over time according to this test (p<0.05), Z is negative, negative trend - time passes, value decreases 
+
+# Is there a third change point?
+pettitt.test(GEN16sel$GENSUM[75:123]) #there is! 1987
+# GEN16sel[94,]
+mk.test(GEN16sel$GENSUM[75:93]) 
+# no trend!
+mk.test(GEN16sel$GENSUM[94:123])
+# no trend!
+# no trend before and after the changing point
+
+```
+> According to the Mann-Kendall test, there is a trend over time for total annual net generation of generators (p<0.001), Z =11.311, which indicates a positive trend over time. Accroding to pettitt test. There are three changing points: Year 1952, Year 1969 and Year 1987 (p<0.05).
+
+```{r}
+ggplot(GEN16sel, aes(x = GENYRONL, y = GENSUM)) + 
+  geom_point() +
+  labs(x= "Year", y="Totoal Annual Net Generation (MWh)")+
+  geom_vline(xintercept = as.Date("1952-01-01"), color="#253494", lty = 2)+ 
+  geom_vline(xintercept = as.Date("1969-01-01"), color="#253494", lty = 2)+
+  geom_vline(xintercept = as.Date("1987-01-01"), color="#253494", lty = 2)+
+  geom_text(x = as.Date("1952-01-01"), y = 80000000, label = "(1952; 6,177,035 MWh)", hjust = 1)+
+  geom_text(x = as.Date("1969-01-01"), y = 120000000, label = "(1969; 59,997,590 MWh)", hjust = 1)+
+  geom_text(x = as.Date("1987-01-01"), y = 200000000, label = "(1978; 70,272,900 MWh)", hjust = 1) 
+```
+
+> As is shown in the figure, before the first changing point 1952, the annual net generation of genrators in U.S. incrased very slowly each year and after 1952, the speed of generation change became faster. Annual net generation kept growing until 1969, this is the second change point. After 1969, there was a negative trend of annual net generation. The third changing point is Year 1987, and there was no clear pattern in 1969-1987 or after 1987.
+
+```{r}
+#Q2 spatial distribution analysis on PLNT16
+#data wrangling
+#add fips number to PLNT16sel data
+library(usmap)
+state_map <- us_map(regions = "states")
+PLNT_State<- merge(state_map, PLNT16sel, by.x = "abbr", by.y = "PSTATABB")%>%
+   select(abbr, fips, full, PLNTGEN, ECO2, Count)
+PLNT_State = PLNT_State[!duplicated(PLNT_State$abbr),]
+
+#join PLNT16 data to counties map data
+states_sf<- st_read('./Data/RAW/States.shp') 
+st_crs(states_sf)
+
+PLNT_State_merge <- merge(states_sf, PLNT_State, by.x = "STATEFP", by.y = "fips")
+#mapview(PLNT_State_merge)
+
+#Plot plant numbers
+#mapview(PLNT_State_merge['Count'], layer.name = "Total Plant Numbers")
+plot_usmap(data = PLNT_State, values = "Count", lines = "red") + 
+    scale_fill_gradient("Total Plant Numbers",low='grey95',high='#132B43')+
+  theme(legend.position = "right")
+
+#Plot PLNT Generation
+#mapview(PLNT_State_merge['PLNTGEN'], layer.name = "Total Plant annual net generation (MWh)")
+#ggplot() + 
+#  geom_sf(data = PLNT_State_merge, aes(fill=PLNTGEN))+
+#  scale_fill_gradient("Total Plant annual net generation (MWh)",low='white',high='darkblue')+ 
+#  theme(legend.position = "right")
+plot_usmap(data = PLNT_State, values = "PLNTGEN", lines = "red") + 
+    scale_fill_gradient("Total Plant annual net generation (MWh)",low='grey95',high='#132B43')+
+  theme(legend.position = "right")
+
+#Plot equivalent CO2
+#mapview(PLNT_State_merge['ECO2'], layer.name = "Total Plant annual CO2 equivalent emissions (tons)")
+plot_usmap(data = PLNT_State, values = "ECO2", lines = "red") + 
+    scale_fill_gradient("Annual CO2 equivalent emissions (tons)",low='grey95',high='#132B43')+
+  theme(legend.position = "right")
+```
+
+> Since our research scale is U.S., it also includes Alaska and this made it very difficult to map it using ggplot (AL will be far away from other sates and the whole map will be very small to show). Therefore, here I use the plot_usmap funciton instead.As the maps show, there are spatial distribution patterns. For total plant numbers, California ranks first but in general,there are more power plants in east cosat states than in west coast. Texas is another exception in the southern part that has relatively larger numbers of power plants.  For plant annual net generation, in general, east coast states also have relatively higher net generation than west coast states, and Texas ranks first. Accordingly, Texas also has highest annual CO2 equivalent emissions, and east coat states have higher emissions than west coast states.
 
 \newpage
 
 # Summary and Conclusions
 <Summarize your major findings from your analyses. What conclusions do you draw from your findings? Make sure to apply this to a broader application for the research question you have answered.>
+> From the analysis above, we can see that
 
 
 
