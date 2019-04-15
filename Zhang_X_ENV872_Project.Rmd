@@ -61,6 +61,14 @@ theme_set(mytheme)
 
 <Paragraph detailing your research question(s) and goals. What do you want to find out? Include a sentence (or a few) on the dataset you are using to answer this question - just enough to give your reader an idea of where you are going with the analysis.>
 
+>Public awareness of global climate change’s impacts on the environment and the society has increased. Greenhouse gas (GHG) emissions account a lot for the global mean temperature rise. To achieve the goal of limiting global warming to 1.5°C, by 2030, global net human-caused emissions of carbon dioxide (CO2) would need to decrease by around 45 % from 2010 levels, and by 2050, CO2 emission would need to reach ‘net zero’ (IPCC, 2018). In United States, a large amount of GHG emissions come from the electric power sector. The electric power sector accounts for 38% of the total U.S. energy consumption in 2017 (US EIA, 2017). In the same year, the transportation end-use sector and other mobile combustion accounted for 1,732.02 MMT CO2Eq., which accounts 28% of the total GHG emission in the U.S., which is the second largest GHG emissions from all other sectors (the largest is the transportation sector) (US EPA, 2018). To study the temporal and spatial pattern of power plants generation can help us predict future power generation and then we can give suggestions accordingly to reduce emission. 
+
+>Therefore, here I raise two research questions:
+>(1) Is there an installation time trend for generator annual net generation? (New power generators tend to have higher or lower capacity overtime?) 
+>(2) Is there a spatial distribution pattern of Power Plants in U.S.? (Number of power plants/ Total Electricity Generation/ Equivalent CO2 emission in each state ~ States)
+
+>Here I am going to use the 2016 Emissions & Generation Resource Integrated Database (eGRID). It is a comprehensive source of data on the environmental characteristics of # almost all electric power generated in the United States. I am going to use the GEN16 tab (2016 Generators) and the PLNT 16 tab (2016 Plants). (Note: usually one power plant has several generators). The former gives information of all the generators currently in use in 2016 and the latter gives information of all the power plants in use in 2016. 
+
 \newpage
 
 # Dataset Information
@@ -69,13 +77,19 @@ theme_set(mytheme)
 
 <Add a table that summarizes your data structure. This table can be made in markdown text or inserted as a `kable` function in an R chunk. If the latter, do not include the code used to generate your table.>
 
->Public awareness of global climate change’s impacts on the environment and the society has increased. Greenhouse gas (GHG) emissions account a lot for the global mean temperature rise. To achieve the goal of limiting global warming to 1.5°C, by 2030, global net human-caused emissions of carbon dioxide (CO2) would need to decrease by around 45 % from 2010 levels, and by 2050, CO2 emission would need to reach ‘net zero’ (IPCC, 2018). In United States, a large amount of GHG emissions come from the electric power sector. The electric power sector accounts for 38% of the total U.S. energy consumption in 2017 (US EIA, 2017). In the same year, the transportation end-use sector and other mobile combustion accounted for 1,732.02 MMT CO2Eq., which accounts 28% of the total GHG emission in the U.S., which is the second largest GHG emissions from all other sectors (the largest is the transportation sector) (US EPA, 2018). To study the temporal and spatial pattern of power plants generation can help us predict future power generation and then we can give suggestions accordingly to reduce emission. 
+> The dataset was retrieved at:
+> https://www.epa.gov/energy/emissions-generation-resource-integrated-database-egrid
+> on 2019-03-25 21:10:11 EDT. It was originally an excel file and I saved it as two separate csv files of GEN16 an PLNT16. Since the dataset has two names in the first two rows (one full name and one abbreviate one), here I only list the columns I will use later, others can check the original dataset for references.
 
->Therefore, here I raise two research questions:
->(1) Is there an installation time trend for generator annual net generation? (New power generators tend to have higher or lower capacity overtime?) 
->(2) Is there a spatial distribution pattern of Power Plants in U.S.? (Number of power plants/ Total Electricity Generation/ Equivalent CO2 emission in each state ~ States)
+> Dataset Name | Information | Useful Column1 | Useful Column2 | Useful Column3 | Useful Column4 
+> ------------- | ------------- | ------------- | ------------- | ------------- | -------------
+> GEN16 | Generators Information | SEQGEN16: eGRID2016 Plant file sequence number | PSTATABB: Plant state abbreviation | GENNTAN: Generator annual net generation (MWh) | GENYRONL: Generator year on-line
+> PLNT16 | Plants Information | SEQGEN16: eGRID2016 Plant file sequence number | PSTATABB: Plant state abbreviation | PLNGENAN: Plant annual net generation (MWh) | PLCO2EQA: Plant annual CO2 equivalent emissions (tons)
 
->Here I am going to use the 2016 Emissions & Generation Resource Integrated Database (eGRID). It is a comprehensive source of data on the environmental characteristics of # almost all electric power generated in the United States. I am going to use the GEN16 tab (2016 Generators) and the PLNT 16 tab (2016 Plants). (Note: usually one power plant has several generators). The former gives information of all the generators currently in use in 2016 and the latter gives information of all the power plants in use in 2016. 
+```{r, }
+
+
+```
 
 
 \newpage
@@ -120,7 +134,7 @@ GEN16sel <- GEN16 %>%
   group_by(GENYRONL)%>%
   summarise(GENSUM = sum(GENNTAN)) 
 
-#GEN16 - sum the totoal generation/CO2/plant numbers by state
+#PLNT16 - sum the totoal generation/CO2/plant numbers by state
 PLNT16sel <- PLNT16 %>%
   select(SEQPLT16, PSTATABB, PLPRMFL, PLNGENAN, PLCO2EQA) %>%
     filter(!is.na(PLNGENAN)&!is.na(PLCO2EQA)) %>%
@@ -158,21 +172,25 @@ head(PLNT16sel)
 ```
 
 
-```{r, echo=FALSE}
+```{r, echo=FALSE, fig.cap= "Overview of Generator online year"}
 ggplot(GEN16sel, aes(x = GENYRONL, y = GENSUM)) + 
   geom_point()+
   labs(x= "Year", y="Totoal Annual Net Generation (MWh)")
 ```
 
-```{r, fig.width=16, fig.height=8, echo=FALSE}
+```{r, fig.width=16, fig.height=8, echo=FALSE, fig.cap= "Plant Numbers"}
 ggplot(PLNT16sel) + 
   geom_bar(aes(x = PSTATABB , y = Count),stat = "identity")+
   labs(x= "State", y="Total Plant Numbers")
+```
 
+```{r, fig.width=16, fig.height=8, echo=FALSE, fig.cap= "Plant Generation"}
 ggplot(PLNT16sel) + 
   geom_bar(aes(x = PSTATABB , y = PLNTGEN),stat = "identity")+
   labs(x= "State", y="Totoal Plant Net Generation (MWh)")
+```
 
+```{r, fig.width=16, fig.height=8, echo=FALSE, fig.cap= "Plant Equivalent CO2 Emissions"}
 ggplot(PLNT16sel) + 
   geom_bar(aes(x = PSTATABB , y = ECO2),stat = "identity")+
   labs(x= "State", y="CO2 equivalent emissions (tons)")
@@ -236,7 +254,7 @@ mk.test(GEN16sel$GENSUM[94:123])
 ```
 > According to the Mann-Kendall test, there is a trend over time for total annual net generation of generators (p<0.001), Z =11.311, which indicates a positive trend over time. Accroding to pettitt test. There are three changing points: Year 1952, Year 1969 and Year 1987 (p<0.05).
 
-```{r}
+```{r, fig.cap="Generators Time Series Analysis", echo=FALSE}
 ggplot(GEN16sel, aes(x = GENYRONL, y = GENSUM)) + 
   geom_point() +
   labs(x= "Year", y="Totoal Annual Net Generation (MWh)")+
@@ -266,13 +284,17 @@ st_crs(states_sf)
 
 PLNT_State_merge <- merge(states_sf, PLNT_State, by.x = "STATEFP", by.y = "fips")
 #mapview(PLNT_State_merge)
+```
 
+```{r, fig.cap="Map of Plant Numbers", echo=FALSE}
 #Plot plant numbers
 #mapview(PLNT_State_merge['Count'], layer.name = "Total Plant Numbers")
 plot_usmap(data = PLNT_State, values = "Count", lines = "red") + 
     scale_fill_gradient("Total Plant Numbers",low='grey95',high='#132B43')+
   theme(legend.position = "right")
+```
 
+```{r, fig.cap="Map of Plant Generations", echo=FALSE}
 #Plot PLNT Generation
 #mapview(PLNT_State_merge['PLNTGEN'], layer.name = "Total Plant annual net generation (MWh)")
 #ggplot() + 
@@ -282,7 +304,9 @@ plot_usmap(data = PLNT_State, values = "Count", lines = "red") +
 plot_usmap(data = PLNT_State, values = "PLNTGEN", lines = "red") + 
     scale_fill_gradient("Total Plant annual net generation (MWh)",low='grey95',high='#132B43')+
   theme(legend.position = "right")
+```
 
+```{r, fig.cap="Map of Equivalent CO2 Emissions", echo=FALSE}
 #Plot equivalent CO2
 #mapview(PLNT_State_merge['ECO2'], layer.name = "Total Plant annual CO2 equivalent emissions (tons)")
 plot_usmap(data = PLNT_State, values = "ECO2", lines = "red") + 
@@ -290,7 +314,7 @@ plot_usmap(data = PLNT_State, values = "ECO2", lines = "red") +
   theme(legend.position = "right")
 ```
 
-> Since our research scale is U.S., it also includes Alaska and this made it very difficult to map it using ggplot (AL will be far away from other sates and the whole map will be very small to show). Therefore, here I use the plot_usmap funciton instead.As the maps show, there are spatial distribution patterns. For total plant numbers, California ranks first but in general,there are more power plants in east cosat states than in west coast. Texas is another exception in the southern part that has relatively larger numbers of power plants.  For plant annual net generation, in general, east coast states also have relatively higher net generation than west coast states, and Texas ranks first. Accordingly, Texas also has highest annual CO2 equivalent emissions, and east coat states have higher emissions than west coast states.
+> Since our research scale is U.S., it also includes Alaska and this made it very difficult to map it using ggplot (AL will be far away from other sates and the whole map will be very small to show). Therefore, here I use the plot_usmap funciton instead.As the maps show (Figure 6, 7, 8), there are spatial distribution patterns. For total plant numbers, California ranks first but in general,there are more power plants in east cosat states than in west coast. Texas is another exception in the southern part that has relatively larger numbers of power plants.  For plant annual net generation, in general, east coast states also have relatively higher net generation than west coast states, and Texas ranks first. Accordingly, Texas also has highest annual CO2 equivalent emissions, and east coat states have higher emissions than west coast states.
 
 \newpage
 
