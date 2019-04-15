@@ -69,6 +69,15 @@ theme_set(mytheme)
 
 <Add a table that summarizes your data structure. This table can be made in markdown text or inserted as a `kable` function in an R chunk. If the latter, do not include the code used to generate your table.>
 
+>Public awareness of global climate change’s impacts on the environment and the society has increased. Greenhouse gas (GHG) emissions account a lot for the global mean temperature rise. To achieve the goal of limiting global warming to 1.5°C, by 2030, global net human-caused emissions of carbon dioxide (CO2) would need to decrease by around 45 % from 2010 levels, and by 2050, CO2 emission would need to reach ‘net zero’ (IPCC, 2018). In United States, a large amount of GHG emissions come from the electric power sector. The electric power sector accounts for 38% of the total U.S. energy consumption in 2017 (US EIA, 2017). In the same year, the transportation end-use sector and other mobile combustion accounted for 1,732.02 MMT CO2Eq., which accounts 28% of the total GHG emission in the U.S., which is the second largest GHG emissions from all other sectors (the largest is the transportation sector) (US EPA, 2018). To study the temporal and spatial pattern of power plants generation can help us predict future power generation and then we can give suggestions accordingly to reduce emission. 
+
+>Therefore, here I raise two research questions:
+>(1) Is there an installation time trend for generator annual net generation? (New power generators tend to have higher or lower capacity overtime?) 
+>(2) Is there a spatial distribution pattern of Power Plants in U.S.? (Number of power plants/ Total Electricity Generation/ Equivalent CO2 emission in each state ~ States)
+
+>Here I am going to use the 2016 Emissions & Generation Resource Integrated Database (eGRID). It is a comprehensive source of data on the environmental characteristics of # almost all electric power generated in the United States. I am going to use the GEN16 tab (2016 Generators) and the PLNT 16 tab (2016 Plants). (Note: usually one power plant has several generators). The former gives information of all the generators currently in use in 2016 and the latter gives information of all the power plants in use in 2016. 
+
+
 \newpage
 
 # Exploratory Data Analysis and Wrangling
